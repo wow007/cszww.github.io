@@ -1,0 +1,381 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!-- saved from url=(0014)about:internet -->
+<html>
+<head>
+<title>彩色战网电子书</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css"> 
+<!-- 
+.selected {font-weight: normal;background-color: #E2E2E2;padding:0px,2px,0px,2px;}
+.unselected { font-weight: normal;padding:0px,2px,0px,2px;}
+.hand { cursor: hand; }
+.p {height: 16px;width: 16px;vertical-align: middle;border: 0;}
+div,body { font-family: Tahoma, Verdana; font-size: 11px; }
+A:link {text-decoration: none; color:#000000}
+A:visited {text-decoration: none; color: #000000}
+A:active {text-decoration: none; color: #000000 }
+A:hover {text-decoration: none; color: #FF0000 }
+
+-->
+</style>
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+var cl,pn,pm,bl;
+var path = 'icons/';
+var pos = 0;
+var icon;
+var tar = 'content';
+var display;
+var imgi;
+var AutoCollapse;
+var LastSelected = -1;
+var loaded = false;
+var max;
+var divlist;
+
+function SetEnv(v,a){
+
+if(v==0){ 
+	pn = [['daplus.gif','daminus.gif'],['tplus.gif','tminus.gif'],['uaplus.gif','uaminus.gif'],['splus.gif','sminus.gif']];
+	PreloadImg('downangle.gif','tshaped.gif','upangle.gif','sline.gif','daplus.gif','daminus.gif','tplus.gif','tminus.gif','uaplus.gif','uaminus.gif','splus.gif','sminus.gif','blank.gif','line.gif');
+}else{
+	pn = [['plus.gif','minus.gif']];
+	PreloadImg('plus.gif','minus.gif','blank.gif');
+
+}
+AutoCollapse = a;
+}
+
+ function PreloadImg(){
+if (document.images) { 
+	var imgs = PreloadImg.arguments; 
+	var pload = new Array();
+	for (var i=0; i<imgs.length; i++) { 
+		pload[i] = new Image; 
+		pload[i].src = path + imgs[i]; 
+	} 
+} 
+ } 
+
+function get(o){
+var x;
+if(document.all) x=document.all[o]; 
+if(document.getElementById) x=document.getElementById(o);
+
+return x;
+}
+
+
+function pnImg(img){
+var i,j;
+for(i=0;i<=3;i++){
+	for(j=0;j<=1;j++){
+	if(img.substr(img.lastIndexOf('/') + 1)== pn[i][j]){
+		return i;
+	}
+	}
+}
+}
+function icon(img){
+var f;
+f = img.substr(img.lastIndexOf('/') + 1);
+if( f=='1.gif' || f=='2.gif'){
+	return ['1.gif','2.gif'];
+}
+if( f=='3.gif' || f=='4.gif'){
+	return ['3.gif','4.gif'];
+}
+if( f=='5.gif' || f=='6.gif'){
+	return ['5.gif','6.gif'];
+}
+if( f=='7.gif' || f=='8.gif'){
+	return ['7.gif','8.gif'];
+}
+return [f,f];
+}
+
+function show(id){
+get('d' + id).style.display='block';
+if(get('imgn' + id )) get('imgn' + id ).src= path + pn[pnImg(get('imgn' + id ).src)][1];
+get('img' + id ).src= path + icon(get('img' + id ).src)[1];
+
+}
+
+function collapse(id){
+get('d' + id ).style.display='none';
+if(get('imgn' + id )) get('imgn' + id ).src= path + pn[pnImg(get('imgn' + id ).src)][0];
+get('img' + id ).src= path + icon(get('img' + id ).src)[0];
+
+}
+
+function collapseAll(){
+var i;
+var o;
+for(i=0;i<=divlist.length-1;i++){
+	if(o=get('d' + divlist[i])){
+		if(o.style.display!='none'){ 
+			collapse(divlist[i]);
+		}
+	}
+}
+}
+
+function showAll(){
+var i;
+var o;
+for(i=0;i<=divlist.length-1;i++){
+	if(o=get('d' + divlist[i])){
+		if(o.style.display!='block'){ 
+			show(divlist[i]);
+		}
+	}
+}
+}
+
+function unselectAll(){
+var i=0;
+while(get("l" + i)){
+	get("l" + i).className = "unselected";
+	i++;
+}
+}
+
+function clickNode(index){
+var e;
+
+e = get("l" + index);
+if(e==null) return;
+e = e.parentNode;
+if(e.nodeName == 'A'){
+	if(e.href!= window.location.href + '#'){
+		parent.parent.content.location.href = e.href;
+	}else{
+		selectNode(index);
+	}
+	e.onclick;
+}
+}
+
+function showParent(ele){
+var e;
+e = ele.parentNode;
+
+if(e==null) return;
+
+if(e.nodeName == 'DIV'){
+	if(e.id!='') show(e.id.substring(1,e.id.length ));
+}else if(e.nodeName == 'A'){
+
+}
+showParent(e);
+}
+
+function showNode(index){
+showParent(get("l" + index));
+LinkClick(index);
+}
+
+function selectNode(index){
+if(LastSelected!=index){
+//collapseAll();
+showParent(get("l" + index));
+LinkClick(index);
+get('l' + index).scrollIntoView(true);
+
+
+//alert(get('l' + index).offsetHeight + '|' + document.body.clientHeight + '|' + document.body.offsetHeight);
+window.scrollTo(0,document.body.scrollTop); // - document.body.clientHeight /3);
+}
+}
+
+
+function NodeClick(id){
+if(get('d' + id ).style.display=='none'){
+	show(id);
+}else{
+	collapse(id);
+}
+return false;
+}
+
+function LinkDblClick(id){
+if(!AutoCollapse){
+	if(get('d' + id ).style.display=='none'){
+		show(id);
+	}else{
+		collapse(id);
+	}
+}
+return false;
+}
+
+function LinkClick(index,hasChild,r){
+if(AutoCollapse && hasChild){
+	if(get('d' + index ).style.display=='none'){
+		collapseAll()
+		showParent(get('l' + index));
+		show(index);
+	}else{
+		collapseAll()
+		showParent(get('l' + index));	
+		collapse(index);
+	}
+}
+if(LastSelected!=-1){
+	get('l' + LastSelected).className = "unselected";
+}
+get('l' + index).className = "selected";
+LastSelected = index;
+return r;
+}
+
+function body_onmousemove(event){
+if(typeof(document.body.scrollTop)!='undefined'){
+if(parseInt(event.clientX)<5){
+window.scroll(0,document.body.scrollTop);}}
+if(typeof(window.scrollY)!='undefined'){
+if(parseInt(event.clientX)<5){
+window.scrollTo(0,window.scrollY);}}
+}
+
+window.defaultStatus = '';
+
+function body_onload(){
+get('loading').style.display='none';
+loaded = true;
+if(parent.parent.content.document.readyState){
+	if(parent.parent.content.document.readyState == 'complete'){
+		try{parent.parent.content.syn();}catch(e){};
+	}
+}else{
+	if(parent.parent.contentLoaded){
+		try{parent.parent.content.syn();}catch(e){};
+	}
+}
+}
+
+//-->
+</SCRIPT>
+<script language="JavaScript" src="languages.js"></script>
+
+</head>
+
+<body bgcolor="#ffffff" leftmargin="5" topmargin="5" marginwidth="5" marginheight="5" onmousemove="body_onmousemove(event);" onload="body_onload();">
+<div id="loading"><font color="#FF0000" size="1"> Loading table of contents... 
+</font><br><br></div>
+<script>SetEnv(0,false)</script><div><nobr><img src="icons/downangle.gif" class="p"><a href="scr/New_Item1.htm" onclick="return LinkClick('0',false,true)" target="content" title="首页" onmousemove="window.status='首页'"><img src="icons/11.gif" class="p"> <span id="l0" class="unselected">首页</span></a></nobr></div>
+<div><nobr><a href="#" onClick="return NodeClick('1')"><img id="imgn1" src="icons/tplus.gif" class="p"></a><a href="scr/常见问题/常见问题.htm" onclick="return LinkClick('1',true,true)" onDblClick="return LinkDblClick('1')" target="content" title="常见问题" onmousemove="window.status='常见问题'"><img id="img1" src="icons/1.gif" class="p"> <span id="l1" class="unselected">常见问题</span></a></nobr></div>
+<div id="d1" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/日常活动.htm" onclick="return LinkClick('2',false,true)" target="content" title="日常活动" onmousemove="window.status='日常活动'"><img src="icons/11.gif" class="p"> <span id="l2" class="unselected">日常活动</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/游戏报错.htm" onclick="return LinkClick('3',false,true)" target="content" title="游戏报错" onmousemove="window.status='游戏报错'"><img src="icons/11.gif" class="p"> <span id="l3" class="unselected">游戏报错</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/下载安装.htm" onclick="return LinkClick('4',false,true)" target="content" title="下载安装" onmousemove="window.status='下载安装'"><img src="icons/11.gif" class="p"> <span id="l4" class="unselected">下载安装</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/契约使用.htm" onclick="return LinkClick('5',false,true)" target="content" title="契约使用" onmousemove="window.status='契约使用'"><img src="icons/11.gif" class="p"> <span id="l5" class="unselected">契约使用</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/自动跟随.htm" onclick="return LinkClick('6',false,true)" target="content" title="自动跟随" onmousemove="window.status='自动跟随'"><img src="icons/11.gif" class="p"> <span id="l6" class="unselected">自动跟随</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/翅膀高信转换.htm" onclick="return LinkClick('7',false,true)" target="content" title="翅膀高信转换" onmousemove="window.status='翅膀高信转换'"><img src="icons/11.gif" class="p"> <span id="l7" class="unselected">翅膀高信转换</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/高级强化.htm" onclick="return LinkClick('8',false,true)" target="content" title="高级强化" onmousemove="window.status='高级强化'"><img src="icons/11.gif" class="p"> <span id="l8" class="unselected">高级强化</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/地图修改.htm" onclick="return LinkClick('9',false,true)" target="content" title="地图修改" onmousemove="window.status='地图修改'"><img src="icons/11.gif" class="p"> <span id="l9" class="unselected">地图修改</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/彩色币介绍.htm" onclick="return LinkClick('10',false,true)" target="content" title="彩色币介绍" onmousemove="window.status='彩色币介绍'"><img src="icons/11.gif" class="p"> <span id="l10" class="unselected">彩色币介绍</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('11')"><img id="imgn11" src="icons/uaplus.gif" class="p"></a><a href="scr/$$unsavedpage1.htm" onclick="return LinkClick('11',true,true)" onDblClick="return LinkDblClick('11')" target="content" title="玩家攻略" onmousemove="window.status='玩家攻略'"><img id="img11" src="icons/1.gif" class="p"> <span id="l11" class="unselected">玩家攻略</span></a></nobr></div>
+<div id="d11" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/常见问题/玩家攻略/牺牲弓马3.htm" onclick="return LinkClick('12',false,true)" target="content" title="牺牲弓马" onmousemove="window.status='牺牲弓马'"><img src="icons/11.gif" class="p"> <span id="l12" class="unselected">牺牲弓马</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/常见问题/新人攻略.htm" onclick="return LinkClick('13',false,true)" target="content" title="新人攻略" onmousemove="window.status='新人攻略'"><img src="icons/11.gif" class="p"> <span id="l13" class="unselected">新人攻略</span></a></nobr></div>
+</div></div><div><nobr><a href="#" onClick="return NodeClick('14')"><img id="imgn14" src="icons/tplus.gif" class="p"></a><a href="scr/特色装备/特色装备目录.htm" onclick="return LinkClick('14',true,true)" onDblClick="return LinkDblClick('14')" target="content" title="特色装备" onmousemove="window.status='特色装备'"><img id="img14" src="icons/1.gif" class="p"> <span id="l14" class="unselected">特色装备</span></a></nobr></div>
+<div id="d14" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/新符文之语合集表.htm" onclick="return LinkClick('15',false,true)" target="content" title="新符文之语" onmousemove="window.status='新符文之语'"><img src="icons/11.gif" class="p"> <span id="l15" class="unselected">新符文之语</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/原版符文之语.htm" onclick="return LinkClick('16',false,true)" target="content" title="原符文之语" onmousemove="window.status='原符文之语'"><img src="icons/11.gif" class="p"> <span id="l16" class="unselected">原符文之语</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/远古契约.htm" onclick="return LinkClick('17',false,true)" target="content" title="远古契约" onmousemove="window.status='远古契约'"><img src="icons/11.gif" class="p"> <span id="l17" class="unselected">远古契约</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/技能基德/技能基德.htm" onclick="return LinkClick('18',false,true)" target="content" title="基德UGC" onmousemove="window.status='基德UGC'"><img src="icons/11.gif" class="p"> <span id="l18" class="unselected">基德UGC</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/杂物/杂物.htm" onclick="return LinkClick('19',false,true)" target="content" title="杂物" onmousemove="window.status='杂物'"><img src="icons/11.gif" class="p"> <span id="l19" class="unselected">杂物</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/特色羽翼/特色羽翼.htm" onclick="return LinkClick('20',false,true)" target="content" title="特色羽翼" onmousemove="window.status='特色羽翼'"><img src="icons/11.gif" class="p"> <span id="l20" class="unselected">特色羽翼</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('21')"><img id="imgn21" src="icons/uaplus.gif" class="p"></a><a href="scr/特色装备/新增套装/新增装备.htm" onclick="return LinkClick('21',true,true)" onDblClick="return LinkDblClick('21')" target="content" title="新增装备" onmousemove="window.status='新增装备'"><img id="img21" src="icons/1.gif" class="p"> <span id="l21" class="unselected">新增装备</span></a></nobr></div>
+<div id="d21" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/新增套装/新增装备.htm" onclick="return LinkClick('22',false,true)" target="content" title="特色物品1" onmousemove="window.status='特色物品1'"><img src="icons/11.gif" class="p"> <span id="l22" class="unselected">特色物品1</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/新增暗金物品合集1.htm" onclick="return LinkClick('23',false,true)" target="content" title="特色物品2" onmousemove="window.status='特色物品2'"><img src="icons/11.gif" class="p"> <span id="l23" class="unselected">特色物品2</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/新增暗金物品合集2.htm" onclick="return LinkClick('24',false,true)" target="content" title="特色物品3" onmousemove="window.status='特色物品3'"><img src="icons/11.gif" class="p"> <span id="l24" class="unselected">特色物品3</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/狩猎女神.htm" onclick="return LinkClick('25',false,true)" target="content" title="狩猎女神" onmousemove="window.status='狩猎女神'"><img src="icons/11.gif" class="p"> <span id="l25" class="unselected">狩猎女神</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/古代人传承.htm" onclick="return LinkClick('26',false,true)" target="content" title="古代人传承" onmousemove="window.status='古代人传承'"><img src="icons/11.gif" class="p"> <span id="l26" class="unselected">古代人传承</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/新增套装/铁粉徽章.htm" onclick="return LinkClick('27',false,true)" target="content" title="铁粉徽章" onmousemove="window.status='铁粉徽章'"><img src="icons/11.gif" class="p"> <span id="l27" class="unselected">铁粉徽章</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/破法者腰带.htm" onclick="return LinkClick('28',false,true)" target="content" title="破法者腰带" onmousemove="window.status='破法者腰带'"><img src="icons/11.gif" class="p"> <span id="l28" class="unselected">破法者腰带</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/神符圣典.htm" onclick="return LinkClick('29',false,true)" target="content" title="神符圣典" onmousemove="window.status='神符圣典'"><img src="icons/11.gif" class="p"> <span id="l29" class="unselected">神符圣典</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/五彩石.htm" onclick="return LinkClick('30',false,true)" target="content" title="五彩石" onmousemove="window.status='五彩石'"><img src="icons/11.gif" class="p"> <span id="l30" class="unselected">五彩石</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/特色装备/预言者披风.htm" onclick="return LinkClick('31',false,true)" target="content" title="预言者披风" onmousemove="window.status='预言者披风'"><img src="icons/11.gif" class="p"> <span id="l31" class="unselected">预言者披风</span></a></nobr></div>
+</div></div><div><nobr><a href="#" onClick="return NodeClick('32')"><img id="imgn32" src="icons/tplus.gif" class="p"></a><a href="scr/特色公式/合成公式.htm" onclick="return LinkClick('32',true,true)" onDblClick="return LinkDblClick('32')" target="content" title="特色公式" onmousemove="window.status='特色公式'"><img id="img32" src="icons/1.gif" class="p"> <span id="l32" class="unselected">特色公式</span></a></nobr></div>
+<div id="d32" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色公式/合成公式.htm" onclick="return LinkClick('33',false,true)" target="content" title="合成公式" onmousemove="window.status='合成公式'"><img src="icons/11.gif" class="p"> <span id="l33" class="unselected">合成公式</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色公式/回收公式.htm" onclick="return LinkClick('34',false,true)" target="content" title="回收公式" onmousemove="window.status='回收公式'"><img src="icons/11.gif" class="p"> <span id="l34" class="unselected">回收公式</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色公式/翅膀光环.htm" onclick="return LinkClick('35',false,true)" target="content" title="翅膀光环" onmousemove="window.status='翅膀光环'"><img src="icons/11.gif" class="p"> <span id="l35" class="unselected">翅膀光环</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色公式/锻造公式.htm" onclick="return LinkClick('36',false,true)" target="content" title="锻造公式" onmousemove="window.status='锻造公式'"><img src="icons/11.gif" class="p"> <span id="l36" class="unselected">锻造公式</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色公式/雕琢公式.htm" onclick="return LinkClick('37',false,true)" target="content" title="雕琢公式" onmousemove="window.status='雕琢公式'"><img src="icons/11.gif" class="p"> <span id="l37" class="unselected">雕琢公式</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色公式/洗护身符.htm" onclick="return LinkClick('38',false,true)" target="content" title="洗护身符" onmousemove="window.status='洗护身符'"><img src="icons/11.gif" class="p"> <span id="l38" class="unselected">洗护身符</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色公式/强化公式.htm" onclick="return LinkClick('39',false,true)" target="content" title="强化公式" onmousemove="window.status='强化公式'"><img src="icons/11.gif" class="p"> <span id="l39" class="unselected">强化公式</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/特色公式/彩色币兑换公式.htm" onclick="return LinkClick('40',false,true)" target="content" title="彩色币兑换公式" onmousemove="window.status='彩色币兑换公式'"><img src="icons/11.gif" class="p"> <span id="l40" class="unselected">彩色币兑换公式</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('41')"><img id="imgn41" src="icons/tplus.gif" class="p"></a><a href="scr/特色场景/地图目录.htm" onclick="return LinkClick('41',true,true)" onDblClick="return LinkDblClick('41')" target="content" title="特色场景" onmousemove="window.status='特色场景'"><img id="img41" src="icons/1.gif" class="p"> <span id="l41" class="unselected">特色场景</span></a></nobr></div>
+<div id="d41" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/封死之门.htm" onclick="return LinkClick('42',false,true)" target="content" title="封死之门" onmousemove="window.status='封死之门'"><img src="icons/11.gif" class="p"> <span id="l42" class="unselected">封死之门</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/混沌世界.htm" onclick="return LinkClick('43',false,true)" target="content" title="混沌世界" onmousemove="window.status='混沌世界'"><img src="icons/11.gif" class="p"> <span id="l43" class="unselected">混沌世界</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/巢穴.htm" onclick="return LinkClick('44',false,true)" target="content" title="巢穴" onmousemove="window.status='巢穴'"><img src="icons/11.gif" class="p"> <span id="l44" class="unselected">巢穴</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/十八层地狱.htm" onclick="return LinkClick('45',false,true)" target="content" title="十八层地狱" onmousemove="window.status='十八层地狱'"><img src="icons/11.gif" class="p"> <span id="l45" class="unselected">十八层地狱</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/亚瑞特巅峰.htm" onclick="return LinkClick('46',false,true)" target="content" title="亚瑞特巅峰" onmousemove="window.status='亚瑞特巅峰'"><img src="icons/11.gif" class="p"> <span id="l46" class="unselected">亚瑞特巅峰</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/大教堂.htm" onclick="return LinkClick('47',false,true)" target="content" title="大教堂" onmousemove="window.status='大教堂'"><img src="icons/11.gif" class="p"> <span id="l47" class="unselected">大教堂</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/沙城.htm" onclick="return LinkClick('48',false,true)" target="content" title="沙城" onmousemove="window.status='沙城'"><img src="icons/11.gif" class="p"> <span id="l48" class="unselected">沙城</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/小人国.htm" onclick="return LinkClick('49',false,true)" target="content" title="小人国" onmousemove="window.status='小人国'"><img src="icons/11.gif" class="p"> <span id="l49" class="unselected">小人国</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/魔法神殿.htm" onclick="return LinkClick('50',false,true)" target="content" title="魔法神殿" onmousemove="window.status='魔法神殿'"><img src="icons/11.gif" class="p"> <span id="l50" class="unselected">魔法神殿</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/疯狂牛场.htm" onclick="return LinkClick('51',false,true)" target="content" title="疯狂牛场" onmousemove="window.status='疯狂牛场'"><img src="icons/11.gif" class="p"> <span id="l51" class="unselected">疯狂牛场</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/超级牛场.htm" onclick="return LinkClick('52',false,true)" target="content" title="超级牛场" onmousemove="window.status='超级牛场'"><img src="icons/11.gif" class="p"> <span id="l52" class="unselected">超级牛场</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/高倍牛场.htm" onclick="return LinkClick('53',false,true)" target="content" title="高倍牛场" onmousemove="window.status='高倍牛场'"><img src="icons/11.gif" class="p"> <span id="l53" class="unselected">高倍牛场</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/古墓.htm" onclick="return LinkClick('54',false,true)" target="content" title="古墓" onmousemove="window.status='古墓'"><img src="icons/11.gif" class="p"> <span id="l54" class="unselected">古墓</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/随机红门.htm" onclick="return LinkClick('55',false,true)" target="content" title="神秘世界" onmousemove="window.status='神秘世界'"><img src="icons/11.gif" class="p"> <span id="l55" class="unselected">神秘世界</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/火狱.htm" onclick="return LinkClick('56',false,true)" target="content" title="元素场景" onmousemove="window.status='元素场景'"><img src="icons/11.gif" class="p"> <span id="l56" class="unselected">元素场景</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/变异废墟.htm" onclick="return LinkClick('57',false,true)" target="content" title="变异废墟" onmousemove="window.status='变异废墟'"><img src="icons/11.gif" class="p"> <span id="l57" class="unselected">变异废墟</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/暗金牛场.htm" onclick="return LinkClick('58',false,true)" target="content" title="暗金牛场" onmousemove="window.status='暗金牛场'"><img src="icons/11.gif" class="p"> <span id="l58" class="unselected">暗金牛场</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/肉搏地洞1.htm" onclick="return LinkClick('59',false,true)" target="content" title="肉搏地洞" onmousemove="window.status='肉搏地洞'"><img src="icons/11.gif" class="p"> <span id="l59" class="unselected">肉搏地洞</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/巨人地牢.htm" onclick="return LinkClick('60',false,true)" target="content" title="巨人地牢" onmousemove="window.status='巨人地牢'"><img src="icons/11.gif" class="p"> <span id="l60" class="unselected">巨人地牢</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/放逐之地.htm" onclick="return LinkClick('61',false,true)" target="content" title="放逐之地" onmousemove="window.status='放逐之地'"><img src="icons/11.gif" class="p"> <span id="l61" class="unselected">放逐之地</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/狂暴大殿.htm" onclick="return LinkClick('62',false,true)" target="content" title="狂暴大殿" onmousemove="window.status='狂暴大殿'"><img src="icons/11.gif" class="p"> <span id="l62" class="unselected">狂暴大殿</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/哥布林秘境.htm" onclick="return LinkClick('63',false,true)" target="content" title="哥布林秘境" onmousemove="window.status='哥布林秘境'"><img src="icons/11.gif" class="p"> <span id="l63" class="unselected">哥布林秘境</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/巨人地牢2.htm" onclick="return LinkClick('64',false,true)" target="content" title="巨人地牢2" onmousemove="window.status='巨人地牢2'"><img src="icons/11.gif" class="p"> <span id="l64" class="unselected">巨人地牢2</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/血色修道院.htm" onclick="return LinkClick('65',false,true)" target="content" title="血色修道院" onmousemove="window.status='血色修道院'"><img src="icons/11.gif" class="p"> <span id="l65" class="unselected">血色修道院</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色场景/萨卡兰姆.htm" onclick="return LinkClick('66',false,true)" target="content" title="萨卡兰姆" onmousemove="window.status='萨卡兰姆'"><img src="icons/11.gif" class="p"> <span id="l66" class="unselected">萨卡兰姆</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/特色场景/永恒之鸟.htm" onclick="return LinkClick('67',false,true)" target="content" title="永恒之鸟" onmousemove="window.status='永恒之鸟'"><img src="icons/11.gif" class="p"> <span id="l67" class="unselected">永恒之鸟</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('68')"><img id="imgn68" src="icons/tplus.gif" class="p"></a><a href="scr/职业练法/法师/冰火双修.htm" onclick="return LinkClick('68',true,true)" onDblClick="return LinkDblClick('68')" target="content" title="职业练法" onmousemove="window.status='职业练法'"><img id="img68" src="icons/1.gif" class="p"> <span id="l68" class="unselected">职业练法</span></a></nobr></div>
+<div id="d68" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('69')"><img id="imgn69" src="icons/tplus.gif" class="p"></a><a href="scr/New_Item1.htm" onclick="return LinkClick('69',true,true)" onDblClick="return LinkDblClick('69')" target="content" title="德鲁伊" onmousemove="window.status='德鲁伊'"><img id="img69" src="icons/1.gif" class="p"> <span id="l69" class="unselected">德鲁伊</span></a></nobr></div>
+<div id="d69" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/New_Item1.htm" onclick="return LinkClick('70',false,true)" target="content" title="火德" onmousemove="window.status='火德'"><img src="icons/11.gif" class="p"> <span id="l70" class="unselected">火德</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/职业练法/德鲁伊/双修德鲁伊.htm" onclick="return LinkClick('71',false,true)" target="content" title="双修德鲁伊" onmousemove="window.status='双修德鲁伊'"><img src="icons/11.gif" class="p"> <span id="l71" class="unselected">双修德鲁伊</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/New_Item1.htm" onclick="return LinkClick('72',false,true)" target="content" title="风德" onmousemove="window.status='风德'"><img src="icons/11.gif" class="p"> <span id="l72" class="unselected">风德</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/职业练法/德鲁伊/纯招动物园.htm" onclick="return LinkClick('73',false,true)" target="content" title="纯招动物园" onmousemove="window.status='纯招动物园'"><img src="icons/11.gif" class="p"> <span id="l73" class="unselected">纯招动物园</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('74')"><img id="imgn74" src="icons/tplus.gif" class="p"></a><a href="scr/New_Item1.htm" onclick="return LinkClick('74',true,true)" onDblClick="return LinkDblClick('74')" target="content" title="野蛮人" onmousemove="window.status='野蛮人'"><img id="img74" src="icons/1.gif" class="p"> <span id="l74" class="unselected">野蛮人</span></a></nobr></div>
+<div id="d74" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/职业练法/野蛮人/呐喊野蛮人.htm" onclick="return LinkClick('75',false,true)" target="content" title="呐喊野蛮人" onmousemove="window.status='呐喊野蛮人'"><img src="icons/11.gif" class="p"> <span id="l75" class="unselected">呐喊野蛮人</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('76')"><img id="imgn76" src="icons/tplus.gif" class="p"></a><a href="scr/New_Item1.htm" onclick="return LinkClick('76',true,true)" onDblClick="return LinkDblClick('76')" target="content" title="亚马逊" onmousemove="window.status='亚马逊'"><img id="img76" src="icons/1.gif" class="p"> <span id="l76" class="unselected">亚马逊</span></a></nobr></div>
+<div id="d76" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/职业练法/亚马逊/元素弓马.htm" onclick="return LinkClick('77',false,true)" target="content" title="元素弓马" onmousemove="window.status='元素弓马'"><img src="icons/11.gif" class="p"> <span id="l77" class="unselected">元素弓马</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/物理弓马.htm" onclick="return LinkClick('78',false,true)" target="content" title="物理弓马" onmousemove="window.status='物理弓马'"><img src="icons/11.gif" class="p"> <span id="l78" class="unselected">物理弓马</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/职业练法/亚马逊/标枪ama.htm" onclick="return LinkClick('79',false,true)" target="content" title="标枪ama" onmousemove="window.status='标枪ama'"><img src="icons/11.gif" class="p"> <span id="l79" class="unselected">标枪ama</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('80')"><img id="imgn80" src="icons/tplus.gif" class="p"></a><a href="scr/New_Item1.htm" onclick="return LinkClick('80',true,true)" onDblClick="return LinkDblClick('80')" target="content" title="圣骑士" onmousemove="window.status='圣骑士'"><img id="img80" src="icons/1.gif" class="p"> <span id="l80" class="unselected">圣骑士</span></a></nobr></div>
+<div id="d80" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/职业练法/圣骑士/冰火骑士.htm" onclick="return LinkClick('81',false,true)" target="content" title="冰火骑士" onmousemove="window.status='冰火骑士'"><img src="icons/11.gif" class="p"> <span id="l81" class="unselected">冰火骑士</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/职业练法/圣骑士/双热骑士.htm" onclick="return LinkClick('82',false,true)" target="content" title="圣光骑士" onmousemove="window.status='圣光骑士'"><img src="icons/11.gif" class="p"> <span id="l82" class="unselected">圣光骑士</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('83')"><img id="imgn83" src="icons/tplus.gif" class="p"></a><a href="scr/New_Item1.htm" onclick="return LinkClick('83',true,true)" onDblClick="return LinkDblClick('83')" target="content" title="死灵法师" onmousemove="window.status='死灵法师'"><img id="img83" src="icons/1.gif" class="p"> <span id="l83" class="unselected">死灵法师</span></a></nobr></div>
+<div id="d83" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/职业练法/死灵法师/骨招.htm" onclick="return LinkClick('84',false,true)" target="content" title="骨招" onmousemove="window.status='骨招'"><img src="icons/11.gif" class="p"> <span id="l84" class="unselected">骨招</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/New_Item1.htm" onclick="return LinkClick('85',false,true)" target="content" title="毒招" onmousemove="window.status='毒招'"><img src="icons/11.gif" class="p"> <span id="l85" class="unselected">毒招</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/职业练法/死灵法师/纯招.htm" onclick="return LinkClick('86',false,true)" target="content" title="纯招" onmousemove="window.status='纯招'"><img src="icons/11.gif" class="p"> <span id="l86" class="unselected">纯招</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('87')"><img id="imgn87" src="icons/tplus.gif" class="p"></a><a href="scr/New_Item1.htm" onclick="return LinkClick('87',true,true)" onDblClick="return LinkDblClick('87')" target="content" title="法师" onmousemove="window.status='法师'"><img id="img87" src="icons/1.gif" class="p"> <span id="l87" class="unselected">法师</span></a></nobr></div>
+<div id="d87" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/职业练法/法师/火法师.htm" onclick="return LinkClick('88',false,true)" target="content" title="九头蛇法师" onmousemove="window.status='九头蛇法师'"><img src="icons/11.gif" class="p"> <span id="l88" class="unselected">九头蛇法师</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/职业练法/法师/冰火双修.htm" onclick="return LinkClick('89',false,true)" target="content" title="冰火双修" onmousemove="window.status='冰火双修'"><img src="icons/11.gif" class="p"> <span id="l89" class="unselected">冰火双修</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/职业练法/法师/火法师.htm" onclick="return LinkClick('90',false,true)" target="content" title="火法师" onmousemove="window.status='火法师'"><img src="icons/11.gif" class="p"> <span id="l90" class="unselected">火法师</span></a></nobr></div>
+</div><div><nobr><img src="icons/line.gif" class="p"><a href="#" onClick="return NodeClick('91')"><img id="imgn91" src="icons/uaplus.gif" class="p"></a><a href="scr/$$unsavedpage2.htm" onclick="return LinkClick('91',true,true)" onDblClick="return LinkDblClick('91')" target="content" title="刺客" onmousemove="window.status='刺客'"><img id="img91" src="icons/1.gif" class="p"> <span id="l91" class="unselected">刺客</span></a></nobr></div>
+<div id="d91" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/职业练法/刺客/火焰爆震刺客.htm" onclick="return LinkClick('92',false,true)" target="content" title="火焰爆震刺客" onmousemove="window.status='火焰爆震刺客'"><img src="icons/11.gif" class="p"> <span id="l92" class="unselected">火焰爆震刺客</span></a></nobr></div>
+</div></div><div><nobr><a href="#" onClick="return NodeClick('93')"><img id="imgn93" src="icons/tplus.gif" class="p"></a><a href="scr/特色技能/特色技能/特色技能.htm" onclick="return LinkClick('93',true,true)" onDblClick="return LinkDblClick('93')" target="content" title="强化技能" onmousemove="window.status='强化技能'"><img id="img93" src="icons/1.gif" class="p"> <span id="l93" class="unselected">强化技能</span></a></nobr></div>
+<div id="d93" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色技能/特色技能/特色技能.htm" onclick="return LinkClick('94',false,true)" target="content" title="特色技能" onmousemove="window.status='特色技能'"><img src="icons/11.gif" class="p"> <span id="l94" class="unselected">特色技能</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色技能/灵气卷轴/灵气卷轴.htm" onclick="return LinkClick('95',false,true)" target="content" title="灵气卷轴" onmousemove="window.status='灵气卷轴'"><img src="icons/11.gif" class="p"> <span id="l95" class="unselected">灵气卷轴</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/特色技能/佣兵.htm" onclick="return LinkClick('96',false,true)" target="content" title="佣兵" onmousemove="window.status='佣兵'"><img src="icons/11.gif" class="p"> <span id="l96" class="unselected">佣兵</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('97')"><img id="imgn97" src="icons/tplus.gif" class="p"></a><a href="scr/其他设置/基础设置.htm" onclick="return LinkClick('97',true,true)" onDblClick="return LinkDblClick('97')" target="content" title="其他设置" onmousemove="window.status='其他设置'"><img id="img97" src="icons/1.gif" class="p"> <span id="l97" class="unselected">其他设置</span></a></nobr></div>
+<div id="d97" style="display:none"><div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/新增代码.htm" onclick="return LinkClick('98',false,true)" target="content" title="新增代码" onmousemove="window.status='新增代码'"><img src="icons/11.gif" class="p"> <span id="l98" class="unselected">新增代码</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/基础设置.htm" onclick="return LinkClick('99',false,true)" target="content" title="基础设置" onmousemove="window.status='基础设置'"><img src="icons/11.gif" class="p"> <span id="l99" class="unselected">基础设置</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/物价表.htm" onclick="return LinkClick('100',false,true)" target="content" title="物价表" onmousemove="window.status='物价表'"><img src="icons/11.gif" class="p"> <span id="l100" class="unselected">物价表</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/物品代码1.htm" onclick="return LinkClick('101',false,true)" target="content" title="物品代码" onmousemove="window.status='物品代码'"><img src="icons/11.gif" class="p"> <span id="l101" class="unselected">物品代码</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/精英物品一览.htm" onclick="return LinkClick('102',false,true)" target="content" title="精英物品一览" onmousemove="window.status='精英物品一览'"><img src="icons/11.gif" class="p"> <span id="l102" class="unselected">精英物品一览</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/怪物一览.htm" onclick="return LinkClick('103',false,true)" target="content" title="怪物一览" onmousemove="window.status='怪物一览'"><img src="icons/11.gif" class="p"> <span id="l103" class="unselected">怪物一览</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/武器攻击速度计算器.html" onclick="return LinkClick('104',false,true)" target="content" title="武器攻速表" onmousemove="window.status='武器攻速表'"><img src="icons/11.gif" class="p"> <span id="l104" class="unselected">武器攻速表</span></a></nobr></div>
+<div><nobr><img src="icons/line.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/其他设置/经验获得.htm" onclick="return LinkClick('105',false,true)" target="content" title="经验获得" onmousemove="window.status='经验获得'"><img src="icons/11.gif" class="p"> <span id="l105" class="unselected">经验获得</span></a></nobr></div>
+</div><div><nobr><a href="#" onClick="return NodeClick('106')"><img id="imgn106" src="icons/uaplus.gif" class="p"></a><a href="scr/增值服务/赞助价格表.htm" onclick="return LinkClick('106',true,true)" onDblClick="return LinkDblClick('106')" target="content" title="增值服务" onmousemove="window.status='增值服务'"><img id="img106" src="icons/3.gif" class="p"> <span id="l106" class="unselected">增值服务</span></a></nobr></div>
+<div id="d106" style="display:none"><div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/特色装备/符文表.htm" onclick="return LinkClick('107',false,true)" target="content" title="符文表" onmousemove="window.status='符文表'"><img src="icons/11.gif" class="p"> <span id="l107" class="unselected">符文表</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/其他设置/代练价格.htm" onclick="return LinkClick('108',false,true)" target="content" title="代练价格" onmousemove="window.status='代练价格'"><img src="icons/11.gif" class="p"> <span id="l108" class="unselected">代练价格</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/增值服务/多PP钥匙.htm" onclick="return LinkClick('109',false,true)" target="content" title="多PP钥匙" onmousemove="window.status='多PP钥匙'"><img src="icons/11.gif" class="p"> <span id="l109" class="unselected">多PP钥匙</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/tshaped.gif" class="p"><a href="scr/增值服务/赞助价格表.htm" onclick="return LinkClick('110',false,true)" target="content" title="赞助价格表" onmousemove="window.status='赞助价格表'"><img src="icons/11.gif" class="p"> <span id="l110" class="unselected">赞助价格表</span></a></nobr></div>
+<div><nobr><img src="icons/blank.gif" class="p"><img src="icons/upangle.gif" class="p"><a href="scr/特色装备/公牛VIP/公牛VIP.htm" onclick="return LinkClick('111',false,true)" target="content" title="公牛VIP" onmousemove="window.status='公牛VIP'"><img src="icons/11.gif" class="p"> <span id="l111" class="unselected">公牛VIP</span></a></nobr></div>
+</div><script>divlist = [1,11,14,21,32,41,68,69,74,76,80,83,87,91,93,97,106]</script>
+</body>
+</html>
